@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import { body, validationResult, oneOf } from 'express-validator'
+import { createProduct, deleteProduct, getOneProduct, getProducts, updateProduct } from './handlers/product';
+import { createUpdate, deleteUpdate, getOneUpdate, getUpdates, updateUpdate } from './handlers/update'
+
 import { handleInputErrors } from './modules/mw';
 
 const router = Router();
@@ -8,57 +11,51 @@ const router = Router();
  * Product
  */
 
-router.get('/product', (req, res) => {
-    res.json({message: res.shhh_secret})
-});
-router.get('/product/:id', () => {});
-router.put('/product/:id', body('name').isString(), handleInputErrors);
-router.delete('/product/:id', handleInputErrors);
-router.post('/product', (req, res) => {
-
-})
+router.get('/product', getProducts);
+router.get('/product/:id', getOneProduct);
+router.put('/product/:id', body('name').isString(), handleInputErrors, updateProduct);
+router.delete('/product/:id', handleInputErrors, deleteProduct);
+router.post('/product', createProduct);
 
 
 /**
  * Update
  */
 
-router.get('/update', () => {});
-router.get('/update/:id', () => {});
+router.get('/update', getUpdates)
+router.get('/update/:id', getOneUpdate)
 router.put('/update/:id', 
-    //to do
-    body('title').optional(), 
-    body('body').optional(), 
-    body('status').optional(), 
-    body('status').isIn(['IN_PROGRESS', 'SHIPPED', 'DEPRECATED']),
-    body('version').optional(), 
-    () => {}
-);
-router.delete('/update/:id', () => {});
+  body('title').optional(),
+  body('body').optional(),
+  body('status').isIn(['IN_PROGRESS', 'SHIPPED', 'DEPRECATED']).optional(),
+  body('version').optional(),
+  updateUpdate
+)
 router.post('/update',
-    //to do
-    body('title').exists().isString(), 
-    body('body').exists().isString(), 
-    () => {}
-);
+  body('title').exists().isString(),
+  body('body').exists().isString(),
+  body('productId').exists().isString(),
+  createUpdate
+)
+router.delete('/update/:id', deleteUpdate)
 
 /**
- * Update Points
+ * Update Point
  */
 
-router.get('/updatepoints', () => {});
-router.get('/updatepoints/:id', () => {});
-router.put('/updatepoints/:id',
-    body('name').optional().isString(), 
-    body('description').optional().isString(), 
-    () => {}
-);
-router.delete('/updatepoints/:id', () => {});
-router.post('/updatepoints',
-    body('name').isString(), 
-    body('description').isString(), 
-    body('updateId').exists().isString(), 
-    () => {}
-);
+router.get('/updatepoint', () => {})
+router.get('/updatepoint/:id', () => {})
+router.put('/updatepoint/:id', 
+  body('name').optional().isString(), 
+  body('description').optional().isString(),
+  () => {}
+)
+router.post('/updatepoint', 
+  body('name').isString(), 
+  body('description').isString(),
+  body('updateId').exists().isString(),
+  () => {}
+)
+router.delete('/updatepoint/:id', () => {})
 
 export default router;
